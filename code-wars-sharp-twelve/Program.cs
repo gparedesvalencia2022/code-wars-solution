@@ -1,16 +1,50 @@
 ﻿using System;
-using code_wars_sharp_twelve.Kata._5kyu;
-using code_wars_sharp_twelve.Kata._8kyu;
 
-class Program
+public enum Side { None, Left, Right }
+
+public class ChainLink
 {
-    static void Main(string[] args)
-    {
-        List<int> ts = new List<int> { 50, 55, 56, 57, 58 };
-        
-        var result = KataSumOfK.chooseBestSum(163, 3, ts);
+    public ChainLink Left { get; private set; }
+    public ChainLink Right { get; private set; }
 
-        Console.WriteLine($"the result: {result}");
-        Console.ReadLine();
+    public void Append(ChainLink rightPart)
+    {
+        if (this.Right != null)
+            throw new InvalidOperationException("Link is already connected.");
+
+        this.Right = rightPart;
+        rightPart.Left = this;
+    }
+
+    public Side LongerSide()
+    {
+        int lefCout = 0;
+        ChainLink current = this.Left;
+        while (current != null)
+        {
+            lefCout++;
+            current = current.Left;
+        }
+        while (current != null)
+        {
+            lefCout--;
+            current = current.Right;
+        }
+        if (lefCout > 0)
+            return Side.Left;
+        else if (lefCout < 0)
+            return Side.Right;
+        else
+            return Side.None;
+    }
+
+    public static void Main(string[] args)
+    {
+        ChainLink left = new ChainLink();
+        ChainLink middle = new ChainLink();
+        ChainLink right = new ChainLink();
+        left.Append(middle);
+        middle.Append(right);
+        Console.WriteLine(left.LongerSide());
     }
 }
